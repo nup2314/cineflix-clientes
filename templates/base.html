@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}CineFlix{% endblock %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+<div class="contenedor {% block clase %}{% endblock %}">
+    <header class="encabezado">
+        <h1>🎬 CineFlix</h1>
+        <p>{% block subtitulo %}Registro de clientes{% endblock %}</p>
+        {% if session.get('autenticado') %}
+        <form method="POST" action="{{ url_for('logout') }}" class="salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn-salir" type="submit">Cerrar sesión</button>
+        </form>
+        {% endif %}
+    </header>
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, texto in mensajes %}
+            <div class="alerta {{ categoria }}">{{ texto }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    {% if errores %}
+        <div class="alerta error">
+            <strong>Revisa los siguientes datos:</strong>
+            <ul>
+                {% for error in errores %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% block contenido %}{% endblock %}
+</div>
+</body>
+</html>
